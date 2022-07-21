@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded', () => {
   
-  const form = document.getElementById('login-form');
-  
+  const form = document.getElementById('login-form')
+
   form.addEventListener('submit', async event => {
     event.preventDefault();
 
@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const url = 'http://localhost:8000/login/';
     const response = await fetch(url, fetchOptions);
     if (response.ok) {
-      window.location.href = '/';
+      window.location.href = '/'
     } else {
       console.error(response);
     }
