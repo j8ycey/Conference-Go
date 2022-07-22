@@ -33,8 +33,10 @@ class LocationDetailEncoder(ModelEncoder):
 
 class ConferenceListEncoder(ModelEncoder):
     model = Conference
-    properties = ["name",
-                  "id",]
+    properties = [
+        "name",
+        "id",
+    ]
 
 
 class ConferenceDetailEncoder(ModelEncoder):
@@ -57,15 +59,15 @@ class ConferenceDetailEncoder(ModelEncoder):
 
 @require_http_methods(["GET", "POST"])
 def api_list_conferences(request):
+    """List all conferences or create a new one"""
     if request.method == "GET":
         conferences = Conference.objects.all()
         return JsonResponse(
             {"conferences": conferences},
             encoder=ConferenceListEncoder,
         )
-    else:
+    elif request.method == "POST":
         content = json.loads(request.body)
-
         try:
             location = Location.objects.get(id=content["location"])
             content["location"] = location
@@ -74,7 +76,6 @@ def api_list_conferences(request):
                 {"message": "Invalid location id"},
                 status=400,
             )
-
         conference = Conference.objects.create(**content)
         return JsonResponse(
             conference,
@@ -82,31 +83,59 @@ def api_list_conferences(request):
             safe=False,
         )
 
-
+@require_http_methods(["GET", "PUT", "DELETE"])
 def api_show_conference(request, pk):
-    conference = Conference.objects.get(id=pk)
-    weather = get_weather_data(
-        conference.location.city,
-        conference.location.state.abbreviation,
-    )
-    return JsonResponse(
-        {"conference": conference, "weather": weather},
-        encoder=ConferenceDetailEncoder,
-        safe=False,
-    )
+    """List, update or delete conference details"""
+    if request.method == "GET":
+        conference = Conference.objects.get(id=pk)
+        weather = get_weather_data(
+            conference.location.city,
+            conference.location.state.abbreviation,
+        )
+        return JsonResponse(
+            {"conference": conference, "weather": weather},
+            encoder=ConferenceDetailEncoder,
+            safe=False,
+        )
+    elif request.method == "PUT":
+        content = json.loads(request.body)
+        try:
+            Conference.objects.get(id=pk)
+            if "location" in content:
+                location = Location.objects.get(id=content["location"])
+                content["location"] = location
+        except Location.DoesNotExist:
+            return JsonResponse(
+                {"message": "Invalid Location"},
+                status=400,
+            )
+        except Conference.DoesNotExist:
+            return JsonResponse(
+                {"message": "Invalid conference"},
+                status=400,
+            )
+        conference = Conference.objects.update(**content)
+        return JsonResponse(
+            conference,
+            encoder=ConferenceDetailEncoder,
+            safe=False,
+        )
+    elif request.method == "DELETE":
+        count, _ = Conference.objects.filter(id=pk).delete()
+        return JsonResponse({"deleted": count > 0})
 
 
 @require_http_methods(["GET", "POST"])
 def api_list_locations(request):
+    """List all locations or create a new one"""
     if request.method == "GET":
         locations = Location.objects.all()
         return JsonResponse(
             {"locations": locations},
             encoder=LocationListEncoder,
         )
-    else:
+    if request.method == "POST":
         content = json.loads(request.body)
-
         try:
             state = State.objects.get(abbreviation=content["state"])
             content["state"] = state
@@ -115,7 +144,6 @@ def api_list_locations(request):
                 {"message": "Invalid state abbreviation"},
                 status=400,
             )
-
         photo = get_photo(content["city"], content["state"].abbreviation)
         content.update(photo)
         location = Location.objects.create(**content)
@@ -126,8 +154,9 @@ def api_list_locations(request):
         )
 
 
-@require_http_methods(["DELETE", "GET", "PUT"])
+@require_http_methods(["GET", "PUT", "DELETE"])
 def api_show_location(request, pk):
+    """List, update or delete location details"""
     if request.method == "GET":
         location = Location.objects.get(id=pk)
         return JsonResponse(
@@ -135,10 +164,7 @@ def api_show_location(request, pk):
             encoder=LocationDetailEncoder,
             safe=False,
         )
-    elif request.method == "DELETE":
-        count, _ = Location.objects.filter(id=pk).delete()
-        return JsonResponse({"deleted": count > 0})
-    else:
+    elif request.method == "PUT":
         content = json.loads(request.body)
         try:
             if "state" in content:
@@ -156,6 +182,9 @@ def api_show_location(request, pk):
             encoder=LocationDetailEncoder,
             safe=False,
         )
+    elif request.method == "DELETE":
+        count, _ = Location.objects.filter(id=pk).delete()
+        return JsonResponse({"deleted": count > 0})
 
 
 @require_http_methods(["GET"])

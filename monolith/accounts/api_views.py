@@ -87,7 +87,7 @@ def api_list_accounts(request):
             {"accounts": users},
             encoder=AccountModelEncoder,
         )
-    else:
+    elif request.method == "POST":
         status_code, response_content, _ = create_user(request.body)
         if status_code >= 200 and status_code < 300:
             send_account_data(response_content)
