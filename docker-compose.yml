@@ -18,6 +18,17 @@ services:
     depends_on:
       - rabbitmq
       - database
+  react-attendees:
+    image: node:latest
+    command: npm start
+    working_dir: /app
+    volumes:
+      - ./ghi/attendees:/app
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3001
+    ports:
+      - "3001:3001"
   attendees_microservice:
     build:
       context: ./attendees_microservice
