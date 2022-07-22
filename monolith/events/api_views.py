@@ -114,7 +114,9 @@ def api_show_conference(request, pk):
                 {"message": "Invalid conference"},
                 status=400,
             )
-        conference = Conference.objects.update(**content)
+        # conference = Conference.objects.update(**content)
+        Conference.objects.filter(id=pk).update(**content)
+        conference = Conference.objects.get(id=pk)
         return JsonResponse(
             conference,
             encoder=ConferenceDetailEncoder,

@@ -1,12 +1,12 @@
 // Get the cookie out of the cookie store
 const payloadCookie = await cookieStore.get("jwt_access_payload")
-console.log(payloadCookie)
+// console.log(payloadCookie)
 if (payloadCookie) {
   // The cookie value is a JSON-formatted string, so parse it
-  console.log(payloadCookie.value)
+  // console.log(payloadCookie.value)
   // const encodedPayload = JSON.parse(payloadCookie.value);
   const encodedPayload = payloadCookie.value;
-  console.log(encodedPayload)
+  // console.log(encodedPayload)
 
   // Convert the encoded payload from base64 to normal string
   const decodedPayload = atob(encodedPayload)
@@ -15,7 +15,7 @@ if (payloadCookie) {
   const payload = JSON.parse(decodedPayload)
 
   // Print the payload
-  console.log(payload)
+  // console.log(payload)
 
   // Check if "events.add_conference" is in the permissions.
   // If it is, remove 'd-none' from the link
