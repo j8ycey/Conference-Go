@@ -104,6 +104,7 @@ def api_show_conference(request, pk):
             if "location" in content:
                 location = Location.objects.get(id=content["location"])
                 content["location"] = location
+
         except Location.DoesNotExist:
             return JsonResponse(
                 {"message": "Invalid Location"},
@@ -114,7 +115,7 @@ def api_show_conference(request, pk):
                 {"message": "Invalid conference"},
                 status=400,
             )
-        # conference = Conference.objects.update(**content)
+
         Conference.objects.filter(id=pk).update(**content)
         conference = Conference.objects.get(id=pk)
         return JsonResponse(
