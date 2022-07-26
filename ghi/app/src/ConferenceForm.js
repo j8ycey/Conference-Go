@@ -113,16 +113,16 @@ class ConferenceForm extends React.Component {
               <input onChange={this.handleNameChange} value={this.state.name} placeholder="Name" required type="text" name="name" id="name" className="form-control"/>
               <label htmlFor="name">Name</label>
             </div>
-            <div>
-              <label htmlFor="starts">Start Date</label>
+            <div className="form-floating mb-3">
               <input onChange={this.handleStartsChange} value={this.state.starts} type="date" id="starts" name="starts" className="form-control"/>
+              <label htmlFor="starts">Start Date</label>
             </div>
-            <div>
-              <label htmlFor="ends">End Date</label>
+            <div className="form-floating mb-3">
               <input onChange={this.handleEndsChange} value={this.state.ends} type="date" id="ends" name="ends" className="form-control"/>
+              <label htmlFor="ends">End Date</label>
             </div>
-            <div>
-              {/* <label>Description</label> */}
+            <div className="mb-3">
+              <label>Description</label>
               <textarea onChange={this.handleDescriptionChange} value={this.state.description} placeholder="Description" name="description" id="description" className="form-control"></textarea>
             </div>
             <div className="form-floating mb-3">
